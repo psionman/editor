@@ -1,0 +1,53 @@
+[project]
+name = "editor"
+version = "0.0.0"
+description = "Launch editor for various files."
+authors = [
+    {name = "Jeff",email = "jeffwatkins2000@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "appdirs>=1.4.4",
+    "asttokens>=3.0.0",
+    "colorama>=0.4.6",
+    "executing>=2.2.0",
+    "iniconfig>=2.1.0",
+    "markdown>=3.8.2",
+    "packaging>=25.0",
+    "pillow>=11.3.0",
+    "pluggy>=1.6.0",
+    "psi-toml>=0.0.18",
+    "psiconfig>=0.0.13",
+    "psiutils>=0.2.10",
+    "pygments>=2.19.2",
+    "pygobject>=3.54.2",
+    "python-dateutil>=2.9.0.post0",
+    "ruff>=0.15.16",
+    "six>=1.17.0",
+    "structlog>=25.4.0",
+    "tkinterweb>=4.4.4",
+    "tkinterweb-tkhtml>=1.1.1",
+    "tomli>=2.2.1",
+    "tomli-w>=1.2.0",
+]
+
+[dependency-groups]
+dev = ['pytest', 'pytest-mock', 'icecream']
+
+[build-system]
+requires = ['uv-build']
+build-backend = 'uv_build'
+
+
+[tool.ruff]
+line-length = 79
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "B", "UP"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+disallow_untyped_defs = true

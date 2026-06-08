@@ -1,0 +1,31 @@
+{
+    "python.defaultInterpreterPath": "/home/jeff/projects/xxxx/.venv/bin/python",
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.fixAll.ruff": "explicit",
+            "source.organizeImports.ruff": "explicit"
+        }
+    },
+    "ruff.importStrategy": "fromEnvironment",
+    "workbench.colorCustomizations": {
+        "activityBar.activeBackground": "#bbbbbb",
+        "activityBar.background": "#ffdddd",
+        "activityBar.foreground": "#000000",
+        "activityBarBadge.background": "#dd5555",
+        "activityBarBadge.foreground": "#ffffff",
+        "statusBar.background": "#ffdddd",
+        "statusBar.foreground": "#333333",
+        "statusBarItem.hoverBackground": "#bbbbbb",
+        "titleBar.activeBackground": "#ffdddd",
+        "titleBar.activeForeground": "#333333"
+    },
+    "windsurf.model": "Cascade Base",
+    "windsurf.cascade.autoContinue": true,
+    "editor.inlineSuggest.enabled": true,
+    "editor.acceptSuggestionOnEnter": "smart",
+    "windsurf.enableTabAutocomplete": true,
+    "windsurf.enableSupercomplete": true,
+    "python.formatting.provider": "none"
+}
