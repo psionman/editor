@@ -23,7 +23,7 @@ from editor.main_menu import MainMenu
 txt = Text()
 
 TREE_COLUMNS = (
-    ('hint', 'Hint', 125),
+    ('hint', 'Hint', 175),
     ('path', 'Path', 200),
 )
 
@@ -146,6 +146,7 @@ class AppFrame():
 
     def _populate_tree(self) -> None:
         self.files = load_files()
+        self.files.sort(key=lambda f: f.hint.lower())
         self.tree.delete(*self.tree.get_children())
         for file in self.files:
             values = (file.hint, file.path)
