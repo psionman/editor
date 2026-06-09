@@ -38,6 +38,7 @@ class AppFrame():
         # tk variables
         self.file_path = tk.StringVar()
         self.selected_file = tk.BooleanVar()
+        self.source_type = tk.StringVar(value='file')
 
 
         # Trace
@@ -94,13 +95,17 @@ class AppFrame():
         frame.columnconfigure(1, weight=1)
 
         row = 0
+        source_frame = self._souce_frame(frame)
+        source_frame.grid(row=row, column=1, sticky=tk.W, padx=PAD)
+
+        row += 1
         label = ttk.Label(frame, text="Path")
-        label.grid(row=row, column=0, sticky=tk.E, padx=PAD, pady=PAD)
+        label.grid(row=row, column=0, sticky=tk.E, padx=PAD, pady=Pad.S)
 
         entry = ttk.Entry(frame, textvariable=self.file_path)
         entry.grid(row=row, column=1, sticky=tk.EW)
 
-        button = IconButton(frame, txt.OPEN, "open", self._get_file_path)
+        button = IconButton(frame, txt.OPEN, "open", self._get_path)
         button.grid(row=row, column=2, padx=PAD, pady=Pad.S)
 
         self.save_button = IconButton(
@@ -135,6 +140,19 @@ class AppFrame():
         #tree.configure(yscrollcommand=v_scroll.set)
         return tree
 
+    def _souce_frame(self, master: tk.Frame) -> ttk.Frame:
+        frame = ttk.Frame(master)
+        frame.columnconfigure(1, weight=1)
+
+        row = 0
+        for column, source_type in enumerate(['file', 'dir']):
+            radio = ttk.Radiobutton(
+                frame, text=source_type, variable=self.source_type, value=source_type
+            )
+            radio.grid(row=row, column=column, sticky=tk.E, padx=PAD, pady=PAD)
+
+        return frame
+
     def _button_frame(self, master: tk.Frame) -> tk.Frame:
         frame = ButtonFrame(master, tk.HORIZONTAL)
         frame.buttons = [
@@ -149,13 +167,14 @@ class AppFrame():
         self.files.sort(key=lambda f: f.hint.lower())
         self.tree.delete(*self.tree.get_children())
         for file in self.files:
-            values = (file.hint, file.path)
+            values = (file.hint, file.short_path)
             self.tree.insert('', 'end', values=values)
 
     def _tree_clicked(self, *args) -> None:
         self.selected_item = self.tree.selection()
         item: tuple = self.tree.item(self.tree.selection(), 'values')
-        self.file_to_edit = FileData(item[0], item[1])
+        self.file_to_edit = FileData(
+            item[0], item[1].replace('~', str(Path.home())))
 
         self.button_frame.enable(True)
         self.context_menu.enable(True)
@@ -185,6 +204,12 @@ class AppFrame():
         save_enable = self.file_path.get() != ""
         self.save_button.enable(save_enable)
 
+    def _get_path(self, *args) -> None:
+        if self.source_type.get() == "file":
+            self._get_file_path()
+        else:
+            self._get_directory_path()
+
     def _get_file_path(self, *args) -> None:
         file_path = filedialog.askopenfilename(
             title="Select a file",
@@ -193,6 +218,15 @@ class AppFrame():
         )
         if file_path:
             self.file_path.set(file_path)
+            self._value_changed()
+
+    def _get_directory_path(self, *args) -> None:
+        dir_path = filedialog.askdirectory(
+            title="Select a directory",
+            initialdir=Path.home(),
+        )
+        if dir_path:
+            self.file_path.set(dir_path)
             self._value_changed()
 
     def _save_file(self, *args) -> None:

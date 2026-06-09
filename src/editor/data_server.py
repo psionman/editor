@@ -17,6 +17,10 @@ class FileData:
     def __repr__(self):
         return f"FileData(hint='{self.hint}', path='{self.path}')"
 
+    @property
+    def short_path(self):
+        return self.path.replace(str(Path.home()), "~")
+
     def serialize(self):
         return {"hint": self.hint, "path": self.path}
 
