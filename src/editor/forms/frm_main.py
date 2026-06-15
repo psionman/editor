@@ -1,21 +1,22 @@
 
 """AppFrame for Editor launcher."""
 import tkinter as tk
-from tkinter import ttk, filedialog, simpledialog
+from tkinter import ttk, filedialog, simpledialog, messagebox
 from pathlib import Path
-import subprocess
-import time
+from editor.utilities import open_in_kate
 
+from editor.constants import APP_TITLE, EDITOR, ICON_DIR
 from psiutils.constants import PAD, Pad
 from psiutils.buttons import ButtonFrame, IconButton
 from psiutils.utilities import window_resize
-from psiutils.treeview import sort_treeview
+from psiutils.treeview import sort_treeview, TreeColumn
 from psiutils.menus import Menu, MenuItem
 
-from editor.constants import APP_TITLE, EDITOR
 from editor.config import read_config
 from editor.data_server import FileData, load_files
 from editor.text import Text
+from editor.utilities import get_path
+from editor.forms.frm_edit_file import EditFrame
 
 from editor.main_menu import MainMenu
 # from editor.forms.frm
@@ -23,8 +24,9 @@ from editor.main_menu import MainMenu
 txt = Text()
 
 TREE_COLUMNS = (
-    ('hint', 'Hint', 175),
-    ('path', 'Path', 200),
+    TreeColumn('hint', 'Hint', 175, tk.W),
+    TreeColumn('source_type', 'Source Type', 100, tk.W),
+    TreeColumn('path', 'Path', 200, tk.W),
 )
 
 class AppFrame():
@@ -34,6 +36,7 @@ class AppFrame():
         self.config = read_config()
         self.files = []
         self.file_to_edit = None
+        self.file_hint = None
 
         # tk variables
         self.file_path = tk.StringVar()
@@ -95,7 +98,7 @@ class AppFrame():
         frame.columnconfigure(1, weight=1)
 
         row = 0
-        source_frame = self._souce_frame(frame)
+        source_frame = self._source_frame(frame)
         source_frame.grid(row=row, column=1, sticky=tk.W, padx=PAD)
 
         row += 1
@@ -109,7 +112,7 @@ class AppFrame():
         button.grid(row=row, column=2, padx=PAD, pady=Pad.S)
 
         self.save_button = IconButton(
-            frame, txt.SAVE, "save", self._save_file, True
+            frame, txt.APPEND, "append", self._append_file, True, icon_path=ICON_DIR
         )
         self.save_button.disable()
         self.save_button.grid(row=row, column=3, padx=PAD, pady=Pad.S)
@@ -125,22 +128,23 @@ class AppFrame():
             )
         tree.bind('<<TreeviewSelect>>', self._tree_clicked)
         tree.bind('<Button-3>', self._show_context_menu)
+        tree.bind('<Double-Button-1>', self._double_click)
 
-        col_list = tuple(col[0] for col in TREE_COLUMNS)
+        col_list = tuple(col.key for col in TREE_COLUMNS)
         tree['columns'] = col_list
         for col in TREE_COLUMNS:
-            (col_key, col_text, col_width) = (col[0], col[1], col[2])
+            (col_key, col_text, col_width) = (col.key, col.heading, col.width)
             tree.heading(col_key, text=col_text,
                          command=lambda c=col_key:
                          sort_treeview(tree, c, False))
             tree.column(col_key, width=col_width, anchor=tk.W)
-            tree.column(col[0], stretch=tk.NO)
-        tree.column(col[0], stretch=tk.YES)  # stretch last column
+            tree.column(col.key, stretch=tk.NO)
+        tree.column(col.key, stretch=tk.YES)  # stretch last column
         # tree.column(<'right-align-column-name'>, stretch=0, anchor=tk.E)
         #tree.configure(yscrollcommand=v_scroll.set)
         return tree
 
-    def _souce_frame(self, master: tk.Frame) -> ttk.Frame:
+    def _source_frame(self, master: tk.Frame) -> ttk.Frame:
         frame = ttk.Frame(master)
         frame.columnconfigure(1, weight=1)
 
@@ -167,17 +171,30 @@ class AppFrame():
         self.files.sort(key=lambda f: f.hint.lower())
         self.tree.delete(*self.tree.get_children())
         for file in self.files:
-            values = (file.hint, file.short_path)
+            values = (file.hint, file.source_type, file.short_path)
             self.tree.insert('', 'end', values=values)
 
     def _tree_clicked(self, *args) -> None:
         self.selected_item = self.tree.selection()
+        if not self.selected_item:
+            return
+
         item: tuple = self.tree.item(self.tree.selection(), 'values')
+        self.file_data = FileData(item[0], item[1], item[2].replace('~', str(Path.home())))
+        self.file_hint = item[0]
         self.file_to_edit = FileData(
-            item[0], item[1].replace('~', str(Path.home())))
+            item[0], item[1], item[2].replace('~', str(Path.home())))
 
         self.button_frame.enable(True)
         self.context_menu.enable(True)
+
+    def _double_click(self, *args) -> None:
+        self.selected_item = self.tree.selection()
+        if self.selected_item:
+            item: tuple = self.tree.item(self.tree.selection(), 'values')
+            self.file_to_edit = FileData(
+                item[0], item[1], item[2].replace('~', str(Path.home())))
+            self._open_editor()
 
     def _show_context_menu(self, event) -> None:
         self.context_menu.tk_popup(event.x_root, event.y_root)
@@ -187,6 +204,8 @@ class AppFrame():
     def _context_menu(self) -> tk.Menu:
         menu_items = [
             MenuItem('Open Editor', self._open_editor, dimmable=True),
+            MenuItem('Edit item', self.edit_item, dimmable=True),
+            MenuItem('Delete item', self._delete_item, dimmable=True),
         ]
         context_menu = Menu(self.root, menu_items)
         context_menu.enable(False)
@@ -205,44 +224,35 @@ class AppFrame():
         self.save_button.enable(save_enable)
 
     def _get_path(self, *args) -> None:
-        if self.source_type.get() == "file":
-            self._get_file_path()
-        else:
-            self._get_directory_path()
-
-    def _get_file_path(self, *args) -> None:
-        file_path = filedialog.askopenfilename(
-            title="Select a file",
-            initialdir=Path.home(),
-            filetypes=[("All files", "*.*")]
-        )
+        file_path = get_path(self.source_type.get())
         if file_path:
             self.file_path.set(file_path)
             self._value_changed()
 
-    def _get_directory_path(self, *args) -> None:
-        dir_path = filedialog.askdirectory(
-            title="Select a directory",
-            initialdir=Path.home(),
-        )
-        if dir_path:
-            self.file_path.set(dir_path)
-            self._value_changed()
-
-    def _save_file(self, *args) -> None:
+    def _append_file(self, *args) -> None:
         dlg = simpledialog.askstring("Save File", "Enter hint")
         if dlg:
-            # TODO: Save the file with the hint
-            file_data = FileData(hint=dlg, path=self.file_path.get())
-            file_data.save()
+            # Save the file with the hint
+            file_data = FileData(hint=dlg, source_type=self.source_type.get(), path=self.file_path.get())
+            file_data.append()
             self._populate_tree()
 
     def _open_editor(self, *args) -> None:
-        subprocess.Popen([EDITOR, str(self.file_to_edit.path)])
-        time.sleep(0.5)
-        subprocess.call(["kdotool", "search", "--name",
-                            str(self.file_to_edit.path),
-                            "windowactivate"])
-            
+        open_in_kate(self.file_to_edit.path)
+
+    def edit_item(self, *args) -> None:
+        dlg = EditFrame(self)
+        self.root.wait_window(dlg.root)
+        self._populate_tree()
+
+    def _delete_item(self, *args) -> None:
+        response = messagebox.askyesno("Delete Item", "Are you sure you want to delete this item?")
+        if response:
+            # Delete the item
+            file_data = FileData(hint=self.file_hint, source_type=self.source_type.get(), path=self.file_path.get())
+            file_data.delete()
+            self._populate_tree()
+
+        
     def _dismiss(self, *args) -> None:
         self.root.destroy()

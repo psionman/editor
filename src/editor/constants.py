@@ -17,8 +17,10 @@ CONFIG_PATH = Path(user_config_dir(APP_NAME, APP_AUTHOR), 'config.toml')
 USER_DATA_DIR = user_data_dir(APP_NAME, APP_AUTHOR)
 USER_DATA_FILE = 'data.json'
 HOME = str(Path.home())
+ICON_DIR = f"{Path(__file__).parent}/icons/"
 
 # GUI
 APP_TITLE = 'Editor launcher'
 ICON_FILE = Path(
     Path(__file__).parent, 'images', 'file-document-edit-outline.png')
+DEFAULT_GEOMETRY = '800x600'

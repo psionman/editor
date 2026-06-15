@@ -58,7 +58,6 @@ dependencies = [
     { name = "pygments" },
     { name = "pygobject" },
     { name = "python-dateutil" },
-    { name = "ruff" },
     { name = "six" },
     { name = "structlog" },
     { name = "tkinterweb" },
@@ -72,6 +71,7 @@ dev = [
     { name = "icecream" },
     { name = "pytest" },
     { name = "pytest-mock" },
+    { name = "ruff" },
 ]
 
 [package.metadata]
@@ -87,11 +87,10 @@ requires-dist = [
     { name = "pluggy", specifier = ">=1.6.0" },
     { name = "psi-toml", specifier = ">=0.0.18" },
     { name = "psiconfig", specifier = ">=0.0.13" },
-    { name = "psiutils", specifier = ">=0.2.10" },
+    { name = "psiutils", specifier = ">=1.0.1" },
     { name = "pygments", specifier = ">=2.19.2" },
     { name = "pygobject", specifier = ">=3.54.2" },
     { name = "python-dateutil", specifier = ">=2.9.0.post0" },
-    { name = "ruff", specifier = ">=0.15.16" },
     { name = "six", specifier = ">=1.17.0" },
     { name = "structlog", specifier = ">=25.4.0" },
     { name = "tkinterweb", specifier = ">=4.4.4" },
@@ -105,6 +104,7 @@ dev = [
     { name = "icecream" },
     { name = "pytest" },
     { name = "pytest-mock" },
+    { name = "ruff", specifier = ">=0.15.12" },
 ]
 
 [[package]]
@@ -258,7 +258,7 @@ wheels = [
 
 [[package]]
 name = "psiutils"
-version = "0.2.34"
+version = "1.0.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "appdirs" },
@@ -272,6 +272,7 @@ dependencies = [
     { name = "pycairo" },
     { name = "pygments" },
     { name = "pytest" },
+    { name = "ruff" },
     { name = "structlog" },
     { name = "tkcalendar" },
     { name = "tkinterweb" },
@@ -279,9 +280,9 @@ dependencies = [
     { name = "tomli" },
     { name = "tomli-w" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/80/78/87c1e1ac621bd0c0f8c1543c96daec939ab4749bb9e0bc3a5c1c6445a146/psiutils-0.2.34.tar.gz", hash = "sha256:c5a5f74f03c38b625fc129731995111fad1107d1b9a7127b73a3588cd054aa27", size = 223299, upload-time = "2026-05-06T11:07:57.819Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/de/87/d259578046ba3e73e51689bf2d330f38a87796b2f37177aad944517e41de/psiutils-1.0.1.tar.gz", hash = "sha256:cb008a906c920ebf829a150410a08b067a1d5b5d47fae2cad6a39262c32cce3f", size = 227070, upload-time = "2026-06-15T10:53:39.138Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a0/c4/b17557104cf89a50907a9e0be14bf159e7b44ff9ed38d250a7824421ec3a/psiutils-0.2.34-py3-none-any.whl", hash = "sha256:06a1c8639f5bfdf2fd0fa4f8db49bf65d021c5f19a146068bd28eaf8e2808cd0", size = 250310, upload-time = "2026-05-06T11:07:55.873Z" },
+    { url = "https://files.pythonhosted.org/packages/34/98/e165d91cbce1cc9da93f11149c5a18e493ad8d54e405012c7f5ad812bd77/psiutils-1.0.1-py3-none-any.whl", hash = "sha256:18a5d772a0f56191a58a8ae3983d55031241d8bc1dd7b67a4e86ed91eb26c759", size = 254589, upload-time = "2026-06-15T10:53:40.874Z" },
 ]
 
 [[package]]
