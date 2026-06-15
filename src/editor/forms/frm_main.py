@@ -203,9 +203,9 @@ class AppFrame():
 
     def _context_menu(self) -> tk.Menu:
         menu_items = [
-            MenuItem('Open Editor', self._open_editor, dimmable=True),
-            MenuItem('Edit item', self.edit_item, dimmable=True),
-            MenuItem('Delete item', self._delete_item, dimmable=True),
+            MenuItem('Open', self._open_editor, dimmable=True),
+            MenuItem('Edit', self.edit_item, dimmable=True),
+            MenuItem('Delete', self._delete_item, dimmable=True),
         ]
         context_menu = Menu(self.root, menu_items)
         context_menu.enable(False)

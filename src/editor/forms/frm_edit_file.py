@@ -9,7 +9,7 @@ from psiutils.buttons import ButtonFrame, IconButton
 from psiutils.utilities import window_resize
 
 
-
+from editor.utilities import get_path
 from editor.data_server import FileData
 from editor.config import read_config
 from editor.text import Text

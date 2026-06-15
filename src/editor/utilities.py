@@ -10,8 +10,12 @@ import threading
 
 
 def open_in_kate(file_path: str) -> None:
-        _call_process(["kate", file_path])
-        _activate_kate(file_path)
+    if Path(file_path).is_dir():
+        subprocess.call(["dolphin", file_path])
+        return
+        
+    _call_process(["kate", file_path])
+    _activate_kate(file_path)
 
 def _activate_kate(file_path: str) -> None:
     subprocess.run(
@@ -60,10 +64,6 @@ def _call_process_worker(process: list) -> None:
         if stderr:
             error = stderr.strip().split("\n")[-1]
         logger.error("Process failed", process=process, error=error)
-
-        # self.root.after(
-        #     0, lambda: messagebox.showerror("", "Process failed")
-        # )
 
 
 
