@@ -1,6 +1,6 @@
 [project]
 name = "editor"
-version = "0.0.0"
+version = "0.0.1"
 description = "Launch editor for various files."
 authors = [
     {name = "Jeff",email = "jeffwatkins2000@gmail.com"}

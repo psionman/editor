@@ -4,7 +4,7 @@ from tkinter import ttk
 from pathlib import Path
 
 from editor.constants import APP_TITLE, DEFAULT_GEOMETRY
-from psiutils.constants import PAD, Pad
+from psiutils.constants import PAD, Pad, Mode
 from psiutils.buttons import ButtonFrame, IconButton
 from psiutils.utilities import window_resize
 
@@ -16,24 +16,27 @@ from editor.text import Text
 
 txt = Text()
 
-FRAME_TITLE = f'{APP_TITLE} - edit'
-
 
 class EditFrame():
-    def __init__(self, parent: tk.Frame) -> None:
+    def __init__(self, parent: tk.Frame, mode: Mode = Mode.EDIT) -> None:
         self.root = tk.Toplevel(parent.root)
         self.parent = parent
         self.config = read_config()
+        if not mode:
+            mode = Mode.EDIT
+        self.mode = mode
         self.file_data = parent.file_data
+        
+
         # tk variables
         self.hint = tk.StringVar(value=self.file_data.hint)
         self.file_path = tk.StringVar(value=self.file_data.path)
         self.source_type = tk.StringVar(value=self.file_data.source_type)
 
+        # trace changes to variables
         self.hint.trace_add('write', self._value_changed)
         self.file_path.trace_add('write', self._value_changed)
         self.source_type.trace_add('write', self._value_changed)
-
 
         self.show()
 
@@ -44,7 +47,7 @@ class EditFrame():
         except KeyError:
             root.geometry(DEFAULT_GEOMETRY)
         root.transient(self.parent.root)
-        root.title(FRAME_TITLE)
+        root.title(f'{APP_TITLE} - {self.mode.name}')
         root.bind('<Configure>',
                   lambda event, arg=None: window_resize(self, __file__))
 
@@ -136,11 +139,18 @@ class EditFrame():
             or self.file_data.path != self.file_path.get()
             or self.file_data.source_type != self.source_type.get()
         )
-        self.button_frame.enable(changes)
+        present = bool(self.hint.get() and self.file_path.get() and self.source_type.get())
+        self.button_frame.enable(changes and present)
 
     def _save(self, *args) -> None:
-        self.file_data.delete()
-        file_data = FileData(hint=self.hint.get(), source_type=self.source_type.get(), path=self.file_path.get())
+        if self.file_data.path:
+            self.file_data.delete()
+
+        file_data = FileData(
+            hint=self.hint.get(),
+            source_type=self.source_type.get(),
+            path=self.file_path.get(),
+        )
         file_data.append()
         self._dismiss()
 

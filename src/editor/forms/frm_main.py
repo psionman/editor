@@ -5,13 +5,13 @@ from tkinter import ttk, filedialog, simpledialog, messagebox
 from pathlib import Path
 from editor.utilities import open_in_kate
 
-from editor.constants import APP_TITLE, EDITOR, ICON_DIR
-from psiutils.constants import PAD, Pad
+from psiutils.constants import PAD, Pad, Mode
 from psiutils.buttons import ButtonFrame, IconButton
 from psiutils.utilities import window_resize
 from psiutils.treeview import sort_treeview, TreeColumn
-from psiutils.menus import Menu, MenuItem
+from psiutils.menus import Menu, MenuItem, Separator
 
+from editor.constants import APP_TITLE, ICON_DIR
 from editor.config import read_config
 from editor.data_server import FileData, load_files
 from editor.text import Text
@@ -83,39 +83,9 @@ class AppFrame():
         frame.columnconfigure(0, weight=1)
 
         row = 0
-        file_frame = self._file_frame(frame)
-        file_frame.grid(row=row, column=0, sticky=tk.NSEW, padx=PAD, pady=PAD)
-
-        row += 1
         frame.rowconfigure(row, weight=1)
         self.tree = self._tree_frame(frame)
         self.tree.grid(row=row, column=0, sticky=tk.NSEW)
-
-        return frame
-
-    def _file_frame(self, master: tk.Frame) -> ttk.Frame:
-        frame = ttk.Frame(master)
-        frame.columnconfigure(1, weight=1)
-
-        row = 0
-        source_frame = self._source_frame(frame)
-        source_frame.grid(row=row, column=1, sticky=tk.W, padx=PAD)
-
-        row += 1
-        label = ttk.Label(frame, text="Path")
-        label.grid(row=row, column=0, sticky=tk.E, padx=PAD, pady=Pad.S)
-
-        entry = ttk.Entry(frame, textvariable=self.file_path)
-        entry.grid(row=row, column=1, sticky=tk.EW)
-
-        button = IconButton(frame, txt.OPEN, "open", self._get_path)
-        button.grid(row=row, column=2, padx=PAD, pady=Pad.S)
-
-        self.save_button = IconButton(
-            frame, txt.APPEND, "append", self._append_file, True, icon_path=ICON_DIR
-        )
-        self.save_button.disable()
-        self.save_button.grid(row=row, column=3, padx=PAD, pady=Pad.S)
 
         return frame
 
@@ -139,28 +109,16 @@ class AppFrame():
                          sort_treeview(tree, c, False))
             tree.column(col_key, width=col_width, anchor=tk.W)
             tree.column(col.key, stretch=tk.NO)
-        tree.column(col.key, stretch=tk.YES)  # stretch last column
-        # tree.column(<'right-align-column-name'>, stretch=0, anchor=tk.E)
-        #tree.configure(yscrollcommand=v_scroll.set)
+        tree.column(col.key, stretch=tk.YES)
         return tree
-
-    def _source_frame(self, master: tk.Frame) -> ttk.Frame:
-        frame = ttk.Frame(master)
-        frame.columnconfigure(1, weight=1)
-
-        row = 0
-        for column, source_type in enumerate(['file', 'dir']):
-            radio = ttk.Radiobutton(
-                frame, text=source_type, variable=self.source_type, value=source_type
-            )
-            radio.grid(row=row, column=column, sticky=tk.E, padx=PAD, pady=PAD)
-
-        return frame
 
     def _button_frame(self, master: tk.Frame) -> tk.Frame:
         frame = ButtonFrame(master, tk.HORIZONTAL)
         frame.buttons = [
-            frame.icon_button('edit', self._open_editor, True),
+            frame.icon_button('open', self._open_editor, True),
+            frame.icon_button('new', self._new_item),
+            frame.icon_button('edit', self._edit_item, True),
+            frame.icon_button('delete', self._delete_item, True),
             frame.icon_button('close', self._dismiss),
         ]
         frame.enable(False)
@@ -204,8 +162,10 @@ class AppFrame():
     def _context_menu(self) -> tk.Menu:
         menu_items = [
             MenuItem('Open', self._open_editor, dimmable=True),
-            MenuItem('Edit', self.edit_item, dimmable=True),
-            MenuItem('Delete', self._delete_item, dimmable=True),
+            Separator(),
+            MenuItem('New ...', self._new_item),
+            MenuItem('Edit ...', self._edit_item, dimmable=True),
+            MenuItem('Delete ...', self._delete_item, dimmable=True),
         ]
         context_menu = Menu(self.root, menu_items)
         context_menu.enable(False)
@@ -240,7 +200,13 @@ class AppFrame():
     def _open_editor(self, *args) -> None:
         open_in_kate(self.file_to_edit.path)
 
-    def edit_item(self, *args) -> None:
+    def _new_item(self, *args) -> None:
+        self.file_data = FileData()
+        dlg = EditFrame(self, mode=Mode.NEW)
+        self.root.wait_window(dlg.root)
+        self._populate_tree()
+
+    def _edit_item(self, *args) -> None:
         dlg = EditFrame(self)
         self.root.wait_window(dlg.root)
         self._populate_tree()
