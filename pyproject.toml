@@ -19,7 +19,7 @@ dependencies = [
     "pluggy>=1.6.0",
     "psi-toml>=0.0.18",
     "psiconfig>=0.0.13",
-    "psiutils>=1.0.1",
+    "psiutils==1.0.2",
     "pygments>=2.19.2",
     "pygobject>=3.54.2",
     "python-dateutil>=2.9.0.post0",

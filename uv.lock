@@ -87,7 +87,7 @@ requires-dist = [
     { name = "pluggy", specifier = ">=1.6.0" },
     { name = "psi-toml", specifier = ">=0.0.18" },
     { name = "psiconfig", specifier = ">=0.0.13" },
-    { name = "psiutils", specifier = ">=1.0.1" },
+    { name = "psiutils", specifier = "==1.0.2" },
     { name = "pygments", specifier = ">=2.19.2" },
     { name = "pygobject", specifier = ">=3.54.2" },
     { name = "python-dateutil", specifier = ">=2.9.0.post0" },
@@ -258,7 +258,7 @@ wheels = [
 
 [[package]]
 name = "psiutils"
-version = "1.0.1"
+version = "1.0.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "appdirs" },
@@ -280,9 +280,9 @@ dependencies = [
     { name = "tomli" },
     { name = "tomli-w" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/de/87/d259578046ba3e73e51689bf2d330f38a87796b2f37177aad944517e41de/psiutils-1.0.1.tar.gz", hash = "sha256:cb008a906c920ebf829a150410a08b067a1d5b5d47fae2cad6a39262c32cce3f", size = 227070, upload-time = "2026-06-15T10:53:39.138Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/f3/a3/be85888b1553417309522b4ef6c6b78e1467d06e6029e7293eb86fce314b/psiutils-1.0.2.tar.gz", hash = "sha256:a8d6e35fdafb5720ee1b72d8ddae3607f27530e06ccc0977c15af9cf7133ce4b", size = 227089, upload-time = "2026-06-16T10:05:04.468Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/34/98/e165d91cbce1cc9da93f11149c5a18e493ad8d54e405012c7f5ad812bd77/psiutils-1.0.1-py3-none-any.whl", hash = "sha256:18a5d772a0f56191a58a8ae3983d55031241d8bc1dd7b67a4e86ed91eb26c759", size = 254589, upload-time = "2026-06-15T10:53:40.874Z" },
+    { url = "https://files.pythonhosted.org/packages/09/fb/249e6b2e6e594528c4d673ae82b75201ca431edca3d9f113cb591f2de9af/psiutils-1.0.2-py3-none-any.whl", hash = "sha256:d41bd2202cc465e13f26bb6ad0ee00e875ae12edb02bc579ab7b060e851d1d86", size = 254671, upload-time = "2026-06-16T10:05:05.927Z" },
 ]
 
 [[package]]
