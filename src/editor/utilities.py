@@ -4,14 +4,22 @@ from typing import Any
 from tkinter import filedialog
 from pathlib import Path
 
-
-
+import os
 import threading
 
 
 def open_in_kate(file_path: str) -> None:
+    """Open a file in Kate, or a directory in Dolphin."""
+    env = os.environ.copy()
+    env["QT_LOGGING_RULES"] = "*.debug=false;*.warning=false"
+
     if Path(file_path).is_dir():
-        subprocess.call(["dolphin", file_path])
+        subprocess.Popen(
+            ["dolphin", file_path],
+            env=env,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
         return
         
     _call_process(["kate", file_path])
