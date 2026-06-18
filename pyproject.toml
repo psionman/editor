@@ -1,5 +1,5 @@
 [project]
-name = "editor"
+name = "filer"
 version = "0.0.1"
 description = "Launch editor for various files."
 authors = [
@@ -10,6 +10,7 @@ requires-python = ">=3.13"
 dependencies = [
     "appdirs>=1.4.4",
     "asttokens>=3.0.0",
+    "clipboard>=0.0.4",
     "colorama>=0.4.6",
     "executing>=2.2.0",
     "iniconfig>=2.1.0",

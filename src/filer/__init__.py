@@ -1,7 +1,9 @@
 """Initialise the application."""
+
 from psiutils.utilities import psi_logger
-from editor.constants import APP_NAME
-from editor._version import __version__
+
+from filer._version import __version__
+from filer.constants import APP_NAME
 
 version = __version__
 

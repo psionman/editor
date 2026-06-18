@@ -1,23 +1,23 @@
 """EditFrame for Editor launcher."""
-import tkinter as tk
-from tkinter import ttk
-from pathlib import Path
 
-from editor.constants import APP_TITLE, DEFAULT_GEOMETRY
-from psiutils.constants import PAD, Pad, Mode
+import tkinter as tk
+from pathlib import Path
+from tkinter import ttk
+
 from psiutils.buttons import ButtonFrame, IconButton
+from psiutils.constants import PAD, Mode, Pad
 from psiutils.utilities import window_resize
 
-
-from editor.utilities import get_path
-from editor.data_server import FileData
-from editor.config import read_config
-from editor.text import Text
+from filer.config import read_config
+from filer.constants import APP_TITLE, DEFAULT_GEOMETRY
+from filer.data_server import FileData
+from filer.text import Text
+from filer.utilities import get_path
 
 txt = Text()
 
 
-class EditFrame():
+class EditFrame:
     def __init__(self, parent: tk.Frame, mode: Mode = Mode.EDIT) -> None:
         self.root = tk.Toplevel(parent.root)
         self.parent = parent
@@ -26,7 +26,6 @@ class EditFrame():
             mode = Mode.EDIT
         self.mode = mode
         self.file_data = parent.file_data
-        
 
         # tk variables
         self.hint = tk.StringVar(value=self.file_data.hint)
@@ -34,9 +33,9 @@ class EditFrame():
         self.source_type = tk.StringVar(value=self.file_data.source_type)
 
         # trace changes to variables
-        self.hint.trace_add('write', self._value_changed)
-        self.file_path.trace_add('write', self._value_changed)
-        self.source_type.trace_add('write', self._value_changed)
+        self.hint.trace_add("write", self._value_changed)
+        self.file_path.trace_add("write", self._value_changed)
+        self.source_type.trace_add("write", self._value_changed)
 
         self.show()
 
@@ -47,11 +46,13 @@ class EditFrame():
         except KeyError:
             root.geometry(DEFAULT_GEOMETRY)
         root.transient(self.parent.root)
-        root.title(f'{APP_TITLE} - {self.mode.name}')
-        root.bind('<Configure>',
-                  lambda event, arg=None: window_resize(self, __file__))
+        root.title(f"{APP_TITLE} - {self.mode.name}")
+        root.bind(
+            "<Configure>",
+            lambda event, arg=None: window_resize(self, __file__),
+        )
 
-        root.bind('<Control-x>', self._dismiss)
+        root.bind("<Control-x>", self._dismiss)
 
         root.rowconfigure(0, weight=1)
         root.columnconfigure(0, weight=1)
@@ -59,8 +60,9 @@ class EditFrame():
         main_frame = self._main_frame(root)
         main_frame.grid(row=0, column=0, sticky=tk.NSEW, padx=PAD, pady=PAD)
         self.button_frame = self._button_frame(root)
-        self.button_frame.grid(row=8, column=0, columnspan=9,
-                               sticky=tk.EW, padx=PAD, pady=PAD)
+        self.button_frame.grid(
+            row=8, column=0, columnspan=9, sticky=tk.EW, padx=PAD, pady=PAD
+        )
 
         sizegrip = ttk.Sizegrip(root)
         sizegrip.grid(sticky=tk.SE)
@@ -79,7 +81,9 @@ class EditFrame():
 
         row += 1
         file_frame = self._file_frame(frame)
-        file_frame.grid(row=row, column=0, columnspan=2, sticky=tk.EW, padx=PAD, pady=PAD)
+        file_frame.grid(
+            row=row, column=0, columnspan=2, sticky=tk.EW, padx=PAD, pady=PAD
+        )
 
         return frame
 
@@ -107,9 +111,12 @@ class EditFrame():
         frame.columnconfigure(1, weight=1)
 
         row = 0
-        for column, source_type in enumerate(['file', 'dir']):
+        for column, source_type in enumerate(["file", "dir"]):
             radio = ttk.Radiobutton(
-                frame, text=source_type, variable=self.source_type, value=source_type
+                frame,
+                text=source_type,
+                variable=self.source_type,
+                value=source_type,
             )
             radio.grid(row=row, column=column, sticky=tk.E, padx=PAD, pady=PAD)
 
@@ -118,8 +125,8 @@ class EditFrame():
     def _button_frame(self, master: tk.Frame) -> tk.Frame:
         frame = ButtonFrame(master, tk.HORIZONTAL)
         frame.buttons = [
-            frame.icon_button('save', self._save, True),
-            frame.icon_button('exit', self._dismiss),
+            frame.icon_button("save", self._save, True),
+            frame.icon_button("exit", self._dismiss),
         ]
         frame.enable(False)
         return frame
@@ -139,7 +146,9 @@ class EditFrame():
             or self.file_data.path != self.file_path.get()
             or self.file_data.source_type != self.source_type.get()
         )
-        present = bool(self.hint.get() and self.file_path.get() and self.source_type.get())
+        present = bool(
+            self.hint.get() and self.file_path.get() and self.source_type.get()
+        )
         self.button_frame.enable(changes and present)
 
     def _save(self, *args) -> None:

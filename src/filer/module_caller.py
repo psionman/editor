@@ -1,10 +1,10 @@
 """Module caller for Editor launcher."""
 
-from editor.forms.frm_main import AppFrame
-from editor.forms.frm_config import ConfigFrame
+from filer.forms.frm_config import ConfigFrame
+from filer.forms.frm_main import AppFrame
 
 
-class ModuleCaller():
+class ModuleCaller:
     """
     Handles the invocation of specific module dialogs in a GUI application.
 
@@ -30,7 +30,8 @@ class ModuleCaller():
     Supported Modules:
         - config: Opens the ConfigFrame dialog.
         - main: No action, but included for completeness.
-        """
+    """
+
     def __init__(self, root, module) -> None:
         """
         Initialise ModuleCaller to invoke a specified module function.
@@ -49,24 +50,24 @@ class ModuleCaller():
             module: The module name or command to execute.
         """
         modules = {
-            'main': self._main,
-            'config': self._config,
-            }
+            "main": self._main,
+            "config": self._config,
+        }
 
-        if module == '-h':
-            for key in sorted(list(modules.keys())+['main']):
+        if module == "-h":
+            for key in sorted(list(modules.keys()) + ["main"]):
                 print(key)
             self.invalid = True
             return
 
-        if module not in modules and module != 'main':
+        if module not in modules and module != "main":
             self.invalid = True
             return
 
         self.invalid = False
         self.root = root
         modules[module]()
-        if module != 'main':
+        if module != "main":
             self.root.destroy()
         return
 

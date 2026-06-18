@@ -1,7 +1,7 @@
 from psiutils.buttons import ButtonFrame as PsiButtonFrame
 from psiutils.buttons import IconButton
 
-from editor.constants import ICON_DIR
+from filer.constants import ICON_DIR
 
 buttons = {
     "append": ("Append", "playlist-plus"),

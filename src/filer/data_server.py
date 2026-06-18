@@ -1,16 +1,19 @@
 # data_server.py
-from dataclasses import dataclass
-from pathlib import Path
 import csv
-from editor.constants import USER_DATA_DIR
+from pathlib import Path
 
-#/home/jeff/.config/ai_api/config.toml
+from filer.constants import USER_DATA_DIR
+
+# /home/jeff/.config/ai_api/config.toml
 
 FIELD_NAMES = ["hint", "type", "path"]
-PATH = Path(USER_DATA_DIR, 'files.csv')
+PATH = Path(USER_DATA_DIR, "files.csv")
+
 
 class FileData:
-    def __init__(self, hint: str = "", source_type: str = "file", path: str = ""):
+    def __init__(
+        self, hint: str = "", source_type: str = "file", path: str = ""
+    ):
         self.hint = hint
         self.source_type = source_type
         self.path = path
@@ -23,11 +26,7 @@ class FileData:
         return self.path.replace(str(Path.home()), "~")
 
     def serialize(self):
-        return {
-            "hint": self.hint,
-            "type": self.source_type,
-            "path": self.path
-        }
+        return {"hint": self.hint, "type": self.source_type, "path": self.path}
 
     def deserialize(self, data: dict):
         self.hint = data["hint"]
@@ -44,7 +43,7 @@ class FileData:
             if write_header:
                 writer.writeheader()
             writer.writerow(self.serialize())
-            
+
     def delete(self):
         if not PATH.exists():
             return
