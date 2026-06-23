@@ -1,11 +1,9 @@
-
-import subprocess
-from typing import Any
-from tkinter import filedialog
-from pathlib import Path
-
 import os
+import subprocess
 import threading
+from pathlib import Path
+from tkinter import filedialog
+from typing import Any
 
 
 def open_in_kate(file_path: str) -> None:
@@ -21,9 +19,10 @@ def open_in_kate(file_path: str) -> None:
             stderr=subprocess.DEVNULL,
         )
         return
-        
+
     _call_process(["kate", file_path])
     _activate_kate(file_path)
+
 
 def _activate_kate(file_path: str) -> None:
     subprocess.run(
@@ -53,12 +52,14 @@ def _activate_kate(file_path: str) -> None:
         check=False,
     )
 
+
 def _call_process(process: list) -> Any:
     threading.Thread(
         target=_call_process_worker,
         args=(process,),
         daemon=True,
     ).start()
+
 
 def _call_process_worker(process: list) -> None:
     proc = subprocess.Popen(
@@ -75,20 +76,21 @@ def _call_process_worker(process: list) -> None:
         logger.error("Process failed", process=process, error=error)
 
 
-
 def get_path(source_type: str) -> str:
     if source_type == "file":
         return _get_file_path()
     else:
         return _get_directory_path()
 
+
 def _get_file_path() -> str:
     file_path = filedialog.askopenfilename(
         title="Select a file",
         initialdir=Path.home(),
-        filetypes=[("All files", "*.*")]
+        filetypes=[("All files", "*.*")],
     )
     return file_path
+
 
 def _get_directory_path() -> str:
     dir_path = filedialog.askdirectory(

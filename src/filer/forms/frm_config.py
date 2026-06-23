@@ -4,11 +4,11 @@ import tkinter as tk
 from pathlib import Path
 from tkinter import filedialog, ttk
 
-from filer import logger
 from psiutils.buttons import ButtonFrame, IconButton
 from psiutils.constants import PAD
 from psiutils.utilities import window_resize
 
+from filer import logger
 from filer.config import read_config
 from filer.constants import APP_TITLE
 from filer.text import Text

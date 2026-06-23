@@ -1,8 +1,8 @@
 """Constants for Editor launcher."""
 
 from pathlib import Path
-from appdirs import user_config_dir, user_data_dir
 
+from appdirs import user_config_dir, user_data_dir
 from psiutils.known_paths import resolve_path
 
 # General

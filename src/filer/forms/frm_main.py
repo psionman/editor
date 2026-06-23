@@ -3,8 +3,8 @@
 import tkinter as tk
 from pathlib import Path
 from tkinter import messagebox, simpledialog, ttk
-import clipboard
 
+import clipboard
 from psiutils.buttons import ButtonFrame
 from psiutils.constants import PAD, Mode
 from psiutils.menus import Menu, MenuItem, Separator
